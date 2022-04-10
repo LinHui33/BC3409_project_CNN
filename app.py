@@ -22,24 +22,24 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def upload_file():
+def CNN():
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
-        file.save(filename)
-        file = open(filename,"r")
-        model = load_model("CNN")
-        test_image = image.load_img(filename, target_size = (100, 100))
+        file.save("static/" + filename)
+        file = open("static/" + filename,"r")
+        model = load_model("CNN_ResNet50")
+        test_image = image.load_img("static/" + filename, target_size = (100, 100))
         test_image = image.img_to_array(test_image)
         test_image = np.expand_dims(test_image, axis = 0)
         pred = model.predict(test_image)
         if pred[0][0] == 1:
-          prediction = 'NORMAL'
+            s = "Covid"
         else:
-          prediction = 'COVID'
-        return(render_template("index1.html", result=str(prediction)))
+            s = "Normal"
+        return(render_template("CNN.html", result=str(s)))
     else:
-        return(render_template("index1.html", result="2"))
+        return(render_template("CNN.html", result="pending"))
 
 
 # In[ ]:
